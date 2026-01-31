@@ -1,7 +1,7 @@
 -- Insert sample partners for authentication service
-INSERT INTO authentication.partners (id, partner_code, partner_name, active, created_by, created_at, updated_at)
+INSERT INTO authentication.partners (id, partner_code, partner_name, client_secret, api_key, active, created_by, created_at, updated_at)
 VALUES 
-    ('partner-001', 'RINTIS', 'Rintis Partner', true, 'system', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('partner-002', 'merchant-x', 'Merchant X Partner', 'merchant-x-secret-key-123', 'merchant-x-api-key-456', true, 'system', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT (partner_code) DO NOTHING;
 
 -- Insert sample bank accounts for account service

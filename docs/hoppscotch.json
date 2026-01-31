@@ -1,0 +1,1050 @@
+﻿{
+  "v": 11,
+  "name": "Complete API Collection",
+  "folders": [
+    {
+      "name": "OAuth2 & Partner Management (via Gateway)",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Generate OAuth2 Token",
+          "method": "POST",
+          "endpoint": "http://localhost:8999/api/oauth/token",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Basic bXY5S0hhaFNZZzhaSzFESm1TN01ib01Tc0lwQktwVmQ6VmRoaXFKQjRaMUpFdERQQ3Q3Q0Z2SmtOdG9lcHdCMDk=",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/x-www-form-urlencoded",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=client_credentials"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Validate OAuth2 Token",
+          "method": "POST",
+          "endpoint": "http://localhost:8999/api/oauth/token/validate",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"token\": \"{{access_token}}\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Create Partner",
+          "method": "POST",
+          "endpoint": "http://localhost:8999/api/partners",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"partnerCode\": \"TEST_PARTNER\",\n  \"partnerName\": \"Test Partner\",\n  \"clientSecret\": \"client-secret-123\",\n  \"apiKey\": \"api-key-123\",\n  \"publicKey\": \"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...\\n-----END PUBLIC KEY-----\",\n  \"privateKey\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC...\\n-----END PRIVATE KEY-----\",\n  \"partnerPublicKey\": \"partner-public-key\",\n  \"paymentNotifyUrl\": \"https://partner.example.com/notify\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get All Partners",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/api/partners",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Partner by Code",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/api/partners/{{partnerCode}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Activate Partner",
+          "method": "PUT",
+          "endpoint": "http://localhost:8999/api/partners/{{partnerCode}}/activate",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Deactivate Partner",
+          "method": "PUT",
+          "endpoint": "http://localhost:8999/api/partners/{{partnerCode}}/deactivate",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "Account Service (via Gateway)",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Get All Bank Accounts",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/api/accounts",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Balance Summary",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/api/accounts/balance",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "Payment Service (via Gateway)",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Get All Billers",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/api/payments/billers",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Payment Inquiry",
+          "method": "POST",
+          "endpoint": "http://localhost:8999/api/payments/inquiry",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"billerCode\": \"PLN\",\n  \"customerNumber\": \"1234567890\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Process Payment",
+          "method": "POST",
+          "endpoint": "http://localhost:8999/api/payments/payment",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"billerCode\": \"PLN\",\n  \"customerNumber\": \"1234567890\",\n  \"amount\": 100000,\n  \"currency\": \"IDR\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "OAuth2 & Partner Management (Direct)",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Generate OAuth2 Token",
+          "method": "POST",
+          "endpoint": "http://localhost:8080/api/oauth/token",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Basic bXY5S0hhaFNZZzhaSzFESm1TN01ib01Tc0lwQktwVmQ6VmRoaXFKQjRaMUpFdERQQ3Q3Q0Z2SmtOdG9lcHdCMDk=",
+              "active": true
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/x-www-form-urlencoded",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/x-www-form-urlencoded",
+            "body": "grant_type=client_credentials"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Validate OAuth2 Token",
+          "method": "POST",
+          "endpoint": "http://localhost:8080/api/oauth/token/validate",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"token\": \"{{access_token}}\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Create Partner",
+          "method": "POST",
+          "endpoint": "http://localhost:8080/partners",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"partnerCode\": \"TEST_PARTNER\",\n  \"partnerName\": \"Test Partner\",\n  \"clientSecret\": \"client-secret-123\",\n  \"apiKey\": \"api-key-123\",\n  \"publicKey\": \"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...\\n-----END PUBLIC KEY-----\",\n  \"privateKey\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC...\\n-----END PRIVATE KEY-----\",\n  \"partnerPublicKey\": \"partner-public-key\",\n  \"paymentNotifyUrl\": \"https://partner.example.com/notify\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get All Partners",
+          "method": "GET",
+          "endpoint": "http://localhost:8080/partners",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Partner by Code",
+          "method": "GET",
+          "endpoint": "http://localhost:8080/partners/{{partnerCode}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Activate Partner",
+          "method": "PUT",
+          "endpoint": "http://localhost:8080/partners/{{partnerCode}}/activate",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Deactivate Partner",
+          "method": "PUT",
+          "endpoint": "http://localhost:8080/partners/{{partnerCode}}/deactivate",
+          "params": [],
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{access_token}}",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "Account Service (Direct)",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Get All Bank Accounts",
+          "method": "GET",
+          "endpoint": "http://localhost:8081/api/accounts",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Balance Summary",
+          "method": "GET",
+          "endpoint": "http://localhost:8081/api/accounts/balance",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "Payment Service (Direct)",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Get All Billers",
+          "method": "GET",
+          "endpoint": "http://localhost:8082/api/payments/billers",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Payment Inquiry",
+          "method": "POST",
+          "endpoint": "http://localhost:8082/api/payments/inquiry",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"billerCode\": \"PLN\",\n  \"customerNumber\": \"1234567890\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Process Payment",
+          "method": "POST",
+          "endpoint": "http://localhost:8082/api/payments/payment",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"billerCode\": \"PLN\",\n  \"customerNumber\": \"1234567890\",\n  \"amount\": 100000,\n  \"currency\": \"IDR\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "Eureka Service Discovery",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Get All Registered Services",
+          "method": "GET",
+          "endpoint": "http://localhost:8761/eureka/apps",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Authentication Service",
+          "method": "GET",
+          "endpoint": "http://localhost:8761/eureka/apps/SERVICE-AUTHENTICATION",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Account Service",
+          "method": "GET",
+          "endpoint": "http://localhost:8761/eureka/apps/SERVICE-ACCOUNT",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Get Payment Service",
+          "method": "GET",
+          "endpoint": "http://localhost:8761/eureka/apps/SERVICE-PAYMENT",
+          "params": [],
+          "headers": [
+            {
+              "key": "Accept",
+              "value": "application/json",
+              "active": true
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Eureka Dashboard",
+          "method": "GET",
+          "endpoint": "http://localhost:8761",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Eureka Health Check",
+          "method": "GET",
+          "endpoint": "http://localhost:8761/actuator/health",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    },
+    {
+      "name": "Health & Monitoring",
+      "requests": [
+        {
+          "v": "17",
+          "name": "Gateway Health Check",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/actuator/health",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Gateway Prometheus Metrics",
+          "method": "GET",
+          "endpoint": "http://localhost:8999/actuator/prometheus",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Authentication Service Health",
+          "method": "GET",
+          "endpoint": "http://localhost:8080/actuator/health",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Authentication Service Prometheus",
+          "method": "GET",
+          "endpoint": "http://localhost:8080/actuator/prometheus",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Account Service Health",
+          "method": "GET",
+          "endpoint": "http://localhost:8081/actuator/health",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Account Service Prometheus",
+          "method": "GET",
+          "endpoint": "http://localhost:8081/actuator/prometheus",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Payment Service Health",
+          "method": "GET",
+          "endpoint": "http://localhost:8082/actuator/health",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        },
+        {
+          "v": "17",
+          "name": "Payment Service Prometheus",
+          "method": "GET",
+          "endpoint": "http://localhost:8082/actuator/prometheus",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "description": null
+        }
+      ]
+    }
+  ],
+  "requests": [],
+  "auth": {
+    "authType": "none",
+    "authActive": true
+  },
+  "headers": [],
+  "variables": [],
+  "description": ""
+}
