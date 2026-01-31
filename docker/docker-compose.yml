@@ -1,0 +1,256 @@
+name: app
+
+services:
+  # PostgreSQL - Required by Authentication and Account Services
+  postgresql:
+    build:
+      context: ./postgresql
+      dockerfile: Dockerfile
+    container_name: app-postgresql
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: app_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # 1. Eureka Service Discovery - Must start first
+  eureka:
+    build:
+      context: ..
+      dockerfile: eureka/Dockerfile
+    container_name: app-eureka
+    hostname: eureka
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_INSTANCE_HOSTNAME=eureka
+      - SPRING_CLOUD_COMPATIBILITY_VERIFIER_ENABLED=false
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # 2. Authentication Service - Depends on Eureka and PostgreSQL
+  authentication:
+    build:
+      context: ..
+      dockerfile: authentication/Dockerfile
+    container_name: app-authentication
+    hostname: authentication
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
+      - SPRING_DATASOURCE_USERNAME=app_user
+      - SPRING_DATASOURCE_PASSWORD=app_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_SHOW_SQL=false
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+      - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
+    depends_on:
+      eureka:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 120s
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # 3. Account Service - Depends on Eureka and PostgreSQL
+  account:
+    build:
+      context: ..
+      dockerfile: account/Dockerfile
+    container_name: app-account
+    hostname: account
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
+      - SPRING_DATASOURCE_USERNAME=app_user
+      - SPRING_DATASOURCE_PASSWORD=app_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_SHOW_SQL=false
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+      - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
+    depends_on:
+      eureka:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8081/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 120s
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # 4. Payment Service - Depends on Eureka and PostgreSQL
+  payment:
+    build:
+      context: ..
+      dockerfile: payment/Dockerfile
+    container_name: app-payment
+    hostname: payment
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
+      - SPRING_DATASOURCE_USERNAME=app_user
+      - SPRING_DATASOURCE_PASSWORD=app_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_SHOW_SQL=false
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONFIG_ENABLED=false
+      - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
+    depends_on:
+      eureka:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8082/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 120s
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # 5. Gateway Service - Depends on Eureka and all other services
+  gateway:
+    build:
+      context: ..
+      dockerfile: gateway/Dockerfile
+    container_name: app-gateway
+    hostname: gateway
+    ports:
+      - "8999:8999"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+    depends_on:
+      eureka:
+        condition: service_healthy
+      authentication:
+        condition: service_healthy
+      account:
+        condition: service_healthy
+      payment:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8999/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 90s
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # 6. Jaeger - Distributed Tracing UI and Collector (OTLP)
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: app-jaeger
+    hostname: jaeger
+    environment:
+      # Enable OTLP gRPC/HTTP collectors so services can send traces directly to Jaeger
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # 7. Prometheus - Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: app-prometheus
+    hostname: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # 8. Grafana - Monitoring Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: app-grafana
+    hostname: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgresql_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  app-network:
+    driver: bridge
+

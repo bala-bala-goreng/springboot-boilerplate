@@ -1,0 +1,14 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cSpell.words": [
+        "configserver",
+        "gson",
+        "javac",
+        "jdbc",
+        "jjwt",
+        "jsonwebtoken",
+        "openfeign",
+        "panas",
+        "presign"
+    ]
+}
