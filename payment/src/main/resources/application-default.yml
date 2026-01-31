@@ -39,10 +39,11 @@ management:
       exposure:
         include: health,info,metrics,prometheus
       base-path: /actuator
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
+  metrics:
     tags:
       service: ${spring.application.name}
 springdoc:
