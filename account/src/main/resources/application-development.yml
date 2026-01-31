@@ -1,0 +1,3 @@
+spring:
+  config:
+    import: optional:configserver:http://d-gpay-eleanor-config-server:8080

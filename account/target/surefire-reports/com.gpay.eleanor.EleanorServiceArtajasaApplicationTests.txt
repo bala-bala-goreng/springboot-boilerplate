@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.gpay.eleanor.EleanorServiceArtajasaApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.775 s -- in com.gpay.eleanor.EleanorServiceArtajasaApplicationTests

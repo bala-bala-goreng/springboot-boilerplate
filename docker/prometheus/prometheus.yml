@@ -1,0 +1,56 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'microservices-monitor'
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # Gateway Service
+  - job_name: 'gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway:8999']
+        labels:
+          service: 'gateway'
+          environment: 'development'
+
+  # Authentication Service
+  - job_name: 'authentication'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['authentication:8080']
+        labels:
+          service: 'authentication'
+          environment: 'development'
+
+  # Account Service
+  - job_name: 'account'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['account:8081']
+        labels:
+          service: 'account'
+          environment: 'development'
+
+  # Payment Service
+  - job_name: 'payment'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['payment:8082']
+        labels:
+          service: 'payment'
+          environment: 'development'
+
+  # Eureka Service Discovery
+  - job_name: 'eureka'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['eureka:8761']
+        labels:
+          service: 'eureka'
+          environment: 'development'
