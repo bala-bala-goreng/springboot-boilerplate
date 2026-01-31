@@ -1,0 +1,137 @@
+{
+  "dashboard": {
+    "title": "Gateway Service",
+    "tags": ["gateway", "spring-boot", "service"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "HTTP Request Rate",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_count{job=\"gateway\"}[5m])) by (uri, method)",
+            "refId": "A",
+            "legendFormat": "{{method}} {{uri}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "HTTP Response Time (P50, P95, P99)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{job=\"gateway\"}[5m])) by (le))",
+            "refId": "A",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"gateway\"}[5m])) by (le))",
+            "refId": "B",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{job=\"gateway\"}[5m])) by (le))",
+            "refId": "C",
+            "legendFormat": "P99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "HTTP Status Codes",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_count{job=\"gateway\"}[5m])) by (status)",
+            "refId": "A",
+            "legendFormat": "{{status}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "JVM Memory",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{job=\"gateway\", area=\"heap\"} / 1024 / 1024",
+            "refId": "A",
+            "legendFormat": "Heap Used"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{job=\"gateway\", area=\"heap\"} / 1024 / 1024",
+            "refId": "B",
+            "legendFormat": "Heap Max"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "MB"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "JVM Threads",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "jvm_threads_live_threads{job=\"gateway\"}",
+            "refId": "A",
+            "legendFormat": "Live Threads"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "CPU Usage",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "process_cpu_usage{job=\"gateway\"} * 100",
+            "refId": "A",
+            "legendFormat": "CPU %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        }
+      }
+    ]
+  }
+}

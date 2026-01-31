@@ -1,59 +1,314 @@
 {
   "dashboard": {
-    "title": "Microservices Overview",
-    "tags": ["microservices", "spring-boot"],
+    "title": "Microservices Overview - All Services",
+    "tags": ["microservices", "spring-boot", "overview"],
     "timezone": "browser",
-    "schemaVersion": 16,
+    "schemaVersion": 38,
     "version": 1,
     "refresh": "10s",
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
     "panels": [
       {
         "id": 1,
-        "title": "HTTP Request Rate",
-        "type": "graph",
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "title": "Service Health Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
         "targets": [
           {
-            "expr": "sum(rate(http_server_requests_seconds_count[5m])) by (service)",
-            "legendFormat": "{{service}}"
+            "expr": "up{job=~\"gateway|authentication|account|payment|eureka\"}",
+            "refId": "A",
+            "legendFormat": "{{job}}"
           }
-        ]
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "type": "value",
+                "options": {
+                  "0": {"text": "DOWN", "color": "red"},
+                  "1": {"text": "UP", "color": "green"}
+                }
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            }
+          }
+        },
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          }
+        }
       },
       {
         "id": 2,
-        "title": "HTTP Error Rate",
-        "type": "graph",
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "title": "HTTP Request Rate (All Services)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
         "targets": [
           {
-            "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[5m])) by (service)",
-            "legendFormat": "{{service}}"
+            "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway|authentication|account|payment\"}[5m])) by (job, uri, method)",
+            "refId": "A",
+            "legendFormat": "{{job}} - {{method}} {{uri}}"
           }
-        ]
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
       },
       {
         "id": 3,
-        "title": "JVM Memory Usage",
-        "type": "graph",
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "title": "HTTP Response Time (P95)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
         "targets": [
           {
-            "expr": "jvm_memory_used_bytes{area=\"heap\"} / jvm_memory_max_bytes{area=\"heap\"}",
-            "legendFormat": "{{service}}"
+            "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=~\"gateway|authentication|account|payment\"}[5m])) by (job, le))",
+            "refId": "A",
+            "legendFormat": "{{job}}"
           }
-        ]
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
       },
       {
         "id": 4,
-        "title": "Active Threads",
-        "type": "graph",
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "title": "HTTP Error Rate (4xx & 5xx)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
         "targets": [
           {
-            "expr": "jvm_threads_live_threads",
-            "legendFormat": "{{service}}"
+            "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway|authentication|account|payment\", status=~\"4..|5..\"}[5m])) by (job, status)",
+            "refId": "A",
+            "legendFormat": "{{job}} - {{status}}"
           }
-        ]
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "HTTP Success Rate (2xx)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway|authentication|account|payment\", status=~\"2..\"}[5m])) by (job)",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "JVM Memory Usage (Heap)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{job=~\"gateway|authentication|account|payment\", area=\"heap\"} / 1024 / 1024",
+            "refId": "A",
+            "legendFormat": "{{job}} - Used"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{job=~\"gateway|authentication|account|payment\", area=\"heap\"} / 1024 / 1024",
+            "refId": "B",
+            "legendFormat": "{{job}} - Max"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "MB"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "JVM Memory Usage (Non-Heap)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{job=~\"gateway|authentication|account|payment\", area=\"nonheap\"} / 1024 / 1024",
+            "refId": "A",
+            "legendFormat": "{{job}} - Used"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "MB"
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "JVM Threads",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+        "targets": [
+          {
+            "expr": "jvm_threads_live_threads{job=~\"gateway|authentication|account|payment\"}",
+            "refId": "A",
+            "legendFormat": "{{job}} - Live"
+          },
+          {
+            "expr": "jvm_threads_peak_threads{job=~\"gateway|authentication|account|payment\"}",
+            "refId": "B",
+            "legendFormat": "{{job}} - Peak"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "JVM GC Pause Time",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 28},
+        "targets": [
+          {
+            "expr": "sum(rate(jvm_gc_pause_seconds_sum{job=~\"gateway|authentication|account|payment\"}[5m])) by (job, action)",
+            "refId": "A",
+            "legendFormat": "{{job}} - {{action}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "CPU Usage",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 36},
+        "targets": [
+          {
+            "expr": "process_cpu_usage{job=~\"gateway|authentication|account|payment\"} * 100",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        }
+      },
+      {
+        "id": 11,
+        "title": "Database Connection Pool (Active)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 36},
+        "targets": [
+          {
+            "expr": "hikari_connections_active{job=~\"authentication|account|payment\"}",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 12,
+        "title": "Eureka Registered Instances",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 44},
+        "targets": [
+          {
+            "expr": "eureka_registered_instances",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 13,
+        "title": "Eureka Client Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 44},
+        "targets": [
+          {
+            "expr": "eureka_client_status{job=\"eureka\"}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "type": "value",
+                "options": {
+                  "0": {"text": "DOWN", "color": "red"},
+                  "1": {"text": "UP", "color": "green"}
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": 14,
+        "title": "Service Uptime",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 44},
+        "targets": [
+          {
+            "expr": "process_uptime_seconds{job=~\"gateway|authentication|account|payment|eureka\"} / 3600",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "h"
+          }
+        }
       }
     ]
   }
