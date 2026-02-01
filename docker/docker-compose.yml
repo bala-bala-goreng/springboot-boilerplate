@@ -58,14 +58,14 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_PROFILES_ACTIVE=development,docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
       - SPRING_DATASOURCE_USERNAME=app_user
       - SPRING_DATASOURCE_PASSWORD=app_password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - SPRING_JPA_SHOW_SQL=false
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=authentication
       - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
       - SPRING_CLOUD_CONFIG_ENABLED=false
       - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
@@ -94,14 +94,14 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_PROFILES_ACTIVE=development,docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
       - SPRING_DATASOURCE_USERNAME=app_user
       - SPRING_DATASOURCE_PASSWORD=app_password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - SPRING_JPA_SHOW_SQL=false
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=account
       - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
       - SPRING_CLOUD_CONFIG_ENABLED=false
       - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
@@ -130,14 +130,14 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_PROFILES_ACTIVE=development,docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
       - SPRING_DATASOURCE_USERNAME=app_user
       - SPRING_DATASOURCE_PASSWORD=app_password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - SPRING_JPA_SHOW_SQL=false
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=localhost
+      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=payment
       - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
       - SPRING_CLOUD_CONFIG_ENABLED=false
       - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
@@ -166,8 +166,9 @@ services:
     ports:
       - "8999:8999"
     environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - SPRING_PROFILES_ACTIVE=default,docker
+      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - EUREKA_INSTANCE_HOSTNAME=gateway
     depends_on:
       eureka:
         condition: service_healthy

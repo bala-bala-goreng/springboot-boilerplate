@@ -1,71 +1,107 @@
 {
   "dashboard": {
-    "title": "Account Service",
-    "tags": ["account", "spring-boot", "service"],
+    "title": "Account Service Dashboard",
+    "tags": ["account", "spring-boot", "microservices"],
     "timezone": "browser",
     "schemaVersion": 38,
     "version": 1,
     "refresh": "10s",
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
     "panels": [
       {
         "id": 1,
-        "title": "HTTP Request Rate",
-        "type": "timeseries",
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
-        "targets": [
-          {
-            "expr": "sum(rate(http_server_requests_seconds_count{job=\"account\"}[5m])) by (uri, method)",
-            "refId": "A",
-            "legendFormat": "{{method}} {{uri}}"
-          }
-        ],
+        "title": "Service Status",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+        "targets": [{
+          "expr": "up{job=\"account\"}",
+          "refId": "A"
+        }],
         "fieldConfig": {
           "defaults": {
-            "unit": "reqps"
+            "mappings": [{
+              "type": "value",
+              "options": {
+                "0": {"text": "DOWN", "color": "red"},
+                "1": {"text": "UP", "color": "green"}
+              }
+            }],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
           }
         }
       },
       {
         "id": 2,
-        "title": "HTTP Response Time (P95)",
+        "title": "HTTP Request Rate",
         "type": "timeseries",
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
-        "targets": [
-          {
-            "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"account\"}[5m])) by (le))",
-            "refId": "A",
-            "legendFormat": "P95"
-          }
-        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+        "targets": [{
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"account\"}[5m])) by (method, uri)",
+          "refId": "A",
+          "legendFormat": "{{method}} {{uri}}"
+        }],
         "fieldConfig": {
           "defaults": {
-            "unit": "s"
+            "unit": "reqps",
+            "color": {"mode": "palette-classic"}
           }
         }
       },
       {
         "id": 3,
-        "title": "Account API Endpoints",
+        "title": "HTTP Response Time (P95)",
         "type": "timeseries",
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
-        "targets": [
-          {
-            "expr": "sum(rate(http_server_requests_seconds_count{job=\"account\", uri=~\"/api/accounts.*\"}[5m])) by (uri)",
-            "refId": "A",
-            "legendFormat": "{{uri}}"
-          }
-        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+        "targets": [{
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=\"account\"}[5m])) by (le))",
+          "refId": "A",
+          "legendFormat": "P95"
+        }],
         "fieldConfig": {
           "defaults": {
-            "unit": "reqps"
+            "unit": "s",
+            "color": {"mode": "palette-classic"}
           }
         }
       },
       {
         "id": 4,
+        "title": "Account API Endpoints",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+        "targets": [{
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"account\", uri=~\"/api/accounts.*\"}[5m])) by (uri)",
+          "refId": "A",
+          "legendFormat": "{{uri}}"
+        }],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": {"mode": "palette-classic"}
+          }
+        }
+      },
+      {
+        "id": 5,
         "title": "Database Connection Pool",
         "type": "timeseries",
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
         "targets": [
           {
             "expr": "hikari_connections_active{job=\"account\"}",
@@ -80,50 +116,51 @@
         ],
         "fieldConfig": {
           "defaults": {
-            "unit": "short"
-          }
-        }
-      },
-      {
-        "id": 5,
-        "title": "JVM Memory",
-        "type": "timeseries",
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
-        "targets": [
-          {
-            "expr": "jvm_memory_used_bytes{job=\"account\", area=\"heap\"} / 1024 / 1024",
-            "refId": "A",
-            "legendFormat": "Heap Used"
-          },
-          {
-            "expr": "jvm_memory_max_bytes{job=\"account\", area=\"heap\"} / 1024 / 1024",
-            "refId": "B",
-            "legendFormat": "Heap Max"
-          }
-        ],
-        "fieldConfig": {
-          "defaults": {
-            "unit": "MB"
+            "unit": "short",
+            "color": {"mode": "palette-classic"}
           }
         }
       },
       {
         "id": 6,
-        "title": "CPU Usage",
+        "title": "JVM Heap Memory",
         "type": "timeseries",
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
         "targets": [
           {
-            "expr": "process_cpu_usage{job=\"account\"} * 100",
+            "expr": "jvm_memory_used_bytes{job=\"account\", area=\"heap\"} / 1024 / 1024",
             "refId": "A",
-            "legendFormat": "CPU %"
+            "legendFormat": "Used"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{job=\"account\", area=\"heap\"} / 1024 / 1024",
+            "refId": "B",
+            "legendFormat": "Max"
           }
         ],
         "fieldConfig": {
           "defaults": {
+            "unit": "MB",
+            "color": {"mode": "palette-classic"}
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "CPU Usage",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "targets": [{
+          "expr": "process_cpu_usage{job=\"account\"} * 100",
+          "refId": "A",
+          "legendFormat": "CPU %"
+        }],
+        "fieldConfig": {
+          "defaults": {
             "unit": "percent",
             "min": 0,
-            "max": 100
+            "max": 100,
+            "color": {"mode": "palette-classic"}
           }
         }
       }

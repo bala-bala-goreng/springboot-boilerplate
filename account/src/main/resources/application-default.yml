@@ -25,9 +25,9 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: ${SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://127.0.0.1:8761/eureka}}
   instance:
-    hostname: localhost
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:localhost}
     prefer-ip-address: false
     instance-id: ${spring.application.name}:${server.port}
 logging:
@@ -46,6 +46,12 @@ management:
   metrics:
     tags:
       service: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
 springdoc:
   api-docs:
     path: /api-docs
