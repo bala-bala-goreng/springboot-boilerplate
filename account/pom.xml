@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.boilerplate.app</groupId>
@@ -28,7 +28,6 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <java.home>C:\Program Files\Java\jdk-21</java.home>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
     </properties>
     <dependencies>
@@ -175,8 +174,6 @@
                 <version>3.14.1</version>
                 <configuration>
                     <release>21</release>
-                    <fork>true</fork>
-                    <executable>${java.home}/bin/javac.exe</executable>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
