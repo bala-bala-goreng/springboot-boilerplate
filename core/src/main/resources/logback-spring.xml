@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    
+    <!-- Property for service name -->
+    <springProperty scope="context" name="serviceName" source="spring.application.name" defaultValue="unknown"/>
+    
+    <!-- Spring Profile: default, development, local, docker -->
+    <springProfile name="default,development,local,docker">
+        <!-- Console Appender with JSON structured logging -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <!-- Timestamp -->
+                    <timestamp>
+                        <timeZone>UTC</timeZone>
+                        <pattern>yyyy-MM-dd'T'HH:mm:ss.SSSZ</pattern>
+                    </timestamp>
+                    <!-- Log Level -->
+                    <logLevel/>
+                    <!-- Logger Name -->
+                    <loggerName/>
+                    <!-- Message -->
+                    <message/>
+                    <!-- MDC (includes traceId, spanId from Micrometer Tracing) -->
+                    <mdc/>
+                    <!-- Stack Trace -->
+                    <stackTrace>
+                        <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                            <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                            <maxLength>2048</maxLength>
+                            <shortenedClassNameLength>20</shortenedClassNameLength>
+                            <rootCauseFirst>true</rootCauseFirst>
+                        </throwableConverter>
+                    </stackTrace>
+                    <!-- Custom fields for service name and trace context -->
+                    <pattern>
+                        <pattern>
+                            {
+                                "service": "${serviceName}",
+                                "traceId": "%mdc{traceId:-}",
+                                "spanId": "%mdc{spanId:-}"
+                            }
+                        </pattern>
+                    </pattern>
+                </providers>
+            </encoder>
+        </appender>
+        
+        <!-- Root Logger -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        
+        <!-- Application Logger -->
+        <logger name="com.boilerplate.app" level="INFO"/>
+        
+        <!-- Spring Framework Loggers -->
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework.web" level="INFO"/>
+        <logger name="org.springframework.cloud" level="INFO"/>
+        
+        <!-- Database Loggers -->
+        <logger name="org.hibernate" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+        
+        <!-- Eureka Loggers -->
+        <logger name="com.netflix.eureka" level="INFO"/>
+        <logger name="com.netflix.discovery" level="INFO"/>
+        
+        <!-- Tracing Loggers -->
+        <logger name="io.micrometer.tracing" level="INFO"/>
+        <logger name="brave" level="INFO"/>
+    </springProfile>
+    
+    <!-- Fallback for other profiles - Simple pattern logging -->
+    <springProfile name="!default,!development,!local,!docker">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [${serviceName}] [%X{traceId:-}] [%X{spanId:-}] %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>
