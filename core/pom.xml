@@ -47,14 +47,27 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- Spring Boot Actuator - Centralized in core library -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<exclusions>
+				<!-- Exclude Zipkin auto-configuration - using OTLP for Jaeger instead -->
+				<exclusion>
+					<groupId>org.springframework.boot.actuate</groupId>
+					<artifactId>spring-boot-actuator-autoconfigure-tracing-zipkin</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Micrometer Prometheus - Centralized in core library -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
 		<!-- Micrometer Tracing - Centralized in core library -->
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-tracing-bridge-brave</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.zipkin.reporter2</groupId>
-			<artifactId>zipkin-reporter-brave</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: service-payment
   config:
     import: optional:configserver:http://127.0.0.1:8888
   cloud:
@@ -21,15 +23,13 @@ spring:
 server:
   port: ${SERVER_PORT:8082}
 eureka:
+  instance:
+    instanceId: ${spring.cloud.client.ip-address}:${server.port}
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: ${SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://${EUREKA_HOST:localhost}:8761/eureka}}
-  instance:
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:localhost}
-    prefer-ip-address: false
-    instance-id: ${spring.application.name}:${server.port}
+      defaultZone: http://localhost:8761/eureka
 management:
   endpoints:
     web:
@@ -54,9 +54,16 @@ management:
       exportable: true
     # Explicitly set service name for tracing
     service-name: ${spring.application.name}
+    # Enable tracing export
+    export:
+      otlp:
+        enabled: true
+      zipkin:
+        enabled: false  # Disable Zipkin, use OTLP for Jaeger
   otlp:
     tracing:
       endpoint: http://${JAEGER_HOST:localhost}:4318/v1/traces
+      protocol: http/protobuf
 logging:
   level:
     root: INFO

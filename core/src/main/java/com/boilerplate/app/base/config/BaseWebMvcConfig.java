@@ -20,7 +20,11 @@ public class BaseWebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(controllerLoggingInterceptor)
-            .addPathPatterns("/**");
+            .addPathPatterns("/**")
+            .excludePathPatterns(
+                "/actuator/**",  // Exclude actuator endpoints from request/response logging
+                "/error"         // Exclude error endpoints
+            );
     }
 }
 

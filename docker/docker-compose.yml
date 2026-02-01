@@ -57,19 +57,9 @@ services:
     hostname: authentication
     ports:
       - "8080:8080"
+    command: sh -c "sleep 10 && java $JAVA_OPTS -jar /app/app.jar"
     environment:
-      - SPRING_PROFILES_ACTIVE=development
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
-      - SPRING_DATASOURCE_USERNAME=app_user
-      - SPRING_DATASOURCE_PASSWORD=app_password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_JPA_SHOW_SQL=false
-      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=authentication
-      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
-      - SPRING_CLOUD_CONFIG_ENABLED=false
-      - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
-      - JAEGER_HOST=jaeger
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       eureka:
         condition: service_healthy
@@ -94,20 +84,9 @@ services:
     hostname: account
     ports:
       - "8081:8081"
+    command: sh -c "sleep 10 && java $JAVA_OPTS -jar /app/app.jar"
     environment:
-      - SPRING_PROFILES_ACTIVE=development
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
-      - SPRING_DATASOURCE_USERNAME=app_user
-      - SPRING_DATASOURCE_PASSWORD=app_password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_JPA_SHOW_SQL=false
-      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=account
-      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
-      - SPRING_CLOUD_CONFIG_ENABLED=false
-      - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
-      - SERVER_PORT=8081
-      - JAEGER_HOST=jaeger
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       eureka:
         condition: service_healthy
@@ -132,20 +111,9 @@ services:
     hostname: payment
     ports:
       - "8082:8082"
+    command: sh -c "sleep 10 && java $JAVA_OPTS -jar /app/app.jar"
     environment:
-      - SPRING_PROFILES_ACTIVE=development
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/app_db
-      - SPRING_DATASOURCE_USERNAME=app_user
-      - SPRING_DATASOURCE_PASSWORD=app_password
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_JPA_SHOW_SQL=false
-      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=payment
-      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=false
-      - SPRING_CLOUD_CONFIG_ENABLED=false
-      - SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED=false
-      - SERVER_PORT=8082
-      - JAEGER_HOST=jaeger
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       eureka:
         condition: service_healthy
@@ -170,11 +138,9 @@ services:
     hostname: gateway
     ports:
       - "8999:8999"
+    command: sh -c "sleep 30 && java $JAVA_OPTS -jar /app/app.jar"
     environment:
-      - SPRING_PROFILES_ACTIVE=default
-      - SPRING_CLOUD_EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
-      - EUREKA_INSTANCE_HOSTNAME=gateway
-      - JAEGER_HOST=jaeger
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       eureka:
         condition: service_healthy

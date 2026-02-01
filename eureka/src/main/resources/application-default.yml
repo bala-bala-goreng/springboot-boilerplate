@@ -8,7 +8,7 @@ server:
   port: 8761
 eureka:
   instance:
-    hostname: localhost
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:localhost}
     prefer-ip-address: false
   client:
     # Eureka server doesn't need to register with itself
