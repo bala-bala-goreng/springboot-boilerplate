@@ -1,78 +1,38 @@
 spring:
   application:
     name: service-account
-  config:
-    import: optional:configserver:http://127.0.0.1:8888
-  cloud:
-    compatibility-verifier:
-      enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5432/app_db
     username: app_user
     password: app_password
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        '[format_sql]': true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 server:
-  port: ${SERVER_PORT:8081}
+  port: 8081
+
 eureka:
-  instance:
-    instanceId: ${spring.cloud.client.ip-address}:${server.port}
   client:
-    fetch-registry: true
-    register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
-      base-path: /actuator
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-  metrics:
-    tags:
-      service: ${spring.application.name}
   tracing:
     sampling:
       probability: 1.0
-    baggage:
-      # Enable baggage propagation for trace context
-      remote-fields: traceId,spanId
-    # Enable span logging - logs will appear in spans
-    span:
-      exportable: true
-    # Explicitly set service name for tracing
-    service-name: ${spring.application.name}
-    # Enable tracing export
     export:
       otlp:
         enabled: true
-      zipkin:
-        enabled: false  # Disable Zipkin, use OTLP for Jaeger
   otlp:
     tracing:
       endpoint: http://${JAEGER_HOST:localhost}:4318/v1/traces
-      protocol: http/protobuf
+
 logging:
   level:
     root: INFO
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-    operations-sorter: method
-    tags-sorter: alpha
-  show-actuator: false

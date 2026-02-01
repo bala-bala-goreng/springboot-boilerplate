@@ -34,6 +34,7 @@
                         </throwableConverter>
                     </stackTrace>
                     <!-- Custom fields for service name and trace context -->
+                    <!-- Micrometer Tracing automatically adds traceId and spanId to MDC -->
                     <pattern>
                         <pattern>
                             {

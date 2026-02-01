@@ -65,9 +65,10 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<!-- Micrometer Tracing - Centralized in core library -->
+		<!-- Using OpenTelemetry bridge for native OTLP support (as recommended in Spring Boot blog) -->
 		<dependency>
 			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-tracing-bridge-brave</artifactId>
+			<artifactId>micrometer-tracing-bridge-otel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>

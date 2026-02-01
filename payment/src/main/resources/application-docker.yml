@@ -2,6 +2,8 @@ server:
   port: 8082
 
 spring:
+  application:
+    name: service-payment
   datasource:
     url: jdbc:postgresql://postgresql:5432/app_db
     username: app_user
@@ -10,22 +12,19 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
-  cloud:
-    config:
-      enabled: false
-      import-check:
-        enabled: false
 
 eureka:
-  instance:
-    instanceId: ${spring.cloud.client.ip-address}:${server.port}
   client:
-    fetch-registry: true
-    register-with-eureka: true
     service-url:
       defaultZone: http://eureka:8761/eureka
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+    export:
+      otlp:
+        enabled: true
   otlp:
     tracing:
       endpoint: http://jaeger:4318/v1/traces
