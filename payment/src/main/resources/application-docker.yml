@@ -40,6 +40,9 @@ management:
     export:
       otlp:
         enabled: true
+    # Enable database/JDBC tracing
+    jdbc:
+      enabled: true
   otlp:
     tracing:
       endpoint: http://otel-collector:4318/v1/traces

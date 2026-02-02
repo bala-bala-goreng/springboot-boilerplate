@@ -10,7 +10,7 @@ This boilerplate is designed to help you quickly build and deploy a **microservi
 - **API Gateway**: Centralized routing, authentication, and request forwarding
 - **Authentication & Authorization**: Multi-tenant authentication with OAuth2 and Partner management
 - **Shared Core Library**: Reusable components and utilities across services
-- **Observability**: Distributed tracing, metrics collection, and monitoring dashboards
+- **Observability**: Distributed tracing (end-to-end from gateway to database), metrics collection, and monitoring dashboards
 - **Containerization**: Docker-based deployment with docker-compose orchestration
 - **Database Support**: PostgreSQL for all data storage
 - **Production-Ready**: Health checks, structured logging, error handling, and security best practices
@@ -65,7 +65,7 @@ This boilerplate is designed to help you quickly build and deploy a **microservi
 │              │                        │              │
 │ • Relational │                        │ • Prometheus │
 │   Data       │                        │ • Grafana    │
-│ • JPA/Hibernate│                      │ • Jaeger     │
+│ • JPA/Hibernate│                      │ • Tempo      │
 │ • Partners   │                        │              │
 │ • Tokens     │                        │              │
 └──────────────┘                        └──────────────┘
@@ -143,10 +143,10 @@ springboot-boilerplate/
 Shared library containing common utilities and base components used across all microservices:
 
 - **Logging**: Structured JSON logging with trace ID correlation
+- **Tracing**: OpenTelemetry bridge for distributed tracing
 - **Filters**: Request/response body caching and processing
 - **Interceptors**: Automatic request/response logging
 - **Utilities**: Common utilities for JSON, date/time, object conversion
-- **Feign Client Support**: Logging and configuration for service-to-service communication
 
 **Usage**: All microservices depend on this library via Maven dependency.
 
@@ -167,8 +167,7 @@ Central entry point for all client requests:
 - **Request Routing**: Routes requests to appropriate backend services based on path patterns
 - **Load Balancing**: Automatic load balancing via Spring Cloud LoadBalancer
 - **Authentication**: JWT token validation for OAuth2 tokens
-- **Header Forwarding**: Extracts and forwards custom headers (e.g., `X-INTERNAL-PARTNER-ID`)
-- **Request Transformation**: Modifies requests before forwarding to backend services
+- **Tracing**: Automatic trace context propagation to downstream services
 
 **Port**: `8999`  
 **Key Features**:
@@ -180,7 +179,7 @@ Central entry point for all client requests:
 ### 4. **Authentication Service** (`authentication/`)
 Handles all authentication and authorization:
 
-- **OAuth2 Token Generation**: Client Credentials flow with Basic Authentication for Rintis partner
+- **OAuth2 Token Generation**: Client Credentials flow with Basic Authentication for partners
 - **Partner Management**: CRUD operations for partners and API keys
 - **Token Validation & Revocation**: JWT token validation and revocation
 - **Multi-tenant Support**: Supports multiple partners with OAuth2 authentication
@@ -188,10 +187,11 @@ Handles all authentication and authorization:
 **Port**: `8080`  
 **Database**: PostgreSQL  
 **Key Features**:
-- OAuth2 for Rintis partner (Basic Auth)
+- OAuth2 for partners (Basic Auth with JSON body)
 - Partner management with integrated API keys
 - JWT token generation with custom claims
 - Token validation and revocation
+- Database tracing enabled (JDBC spans)
 
 ### 5. **Account Service** (`account/`)
 Manages user accounts and profiles:
@@ -201,7 +201,9 @@ Manages user accounts and profiles:
 - **Profile Management**: User profile operations
 
 **Port**: `8081`  
-**Database**: PostgreSQL
+**Database**: PostgreSQL  
+**Key Features**:
+- Database tracing enabled (JDBC spans)
 
 ### 6. **Payment Service** (`payment/`)
 Handles payment processing and transactions:
@@ -211,7 +213,9 @@ Handles payment processing and transactions:
 - **Payment Gateway Integration**: Integration with external payment providers
 
 **Port**: `8082`  
-**Database**: PostgreSQL
+**Database**: PostgreSQL  
+**Key Features**:
+- Database tracing enabled (JDBC spans)
 
 ## 🔄 Request Flow Example
 
@@ -235,6 +239,13 @@ Handles payment processing and transactions:
    └─ Returns response
 
 4. Response flows back through Gateway to Client
+
+**Tracing**: All requests are automatically traced end-to-end:
+- Gateway span (HTTP request received)
+- RestTemplate span (outgoing HTTP call)
+- Service span (HTTP request in service)
+- Database span (JDBC query execution)
+- All spans linked with same trace ID
 ```
 
 ## 🚀 Quick Start
@@ -272,7 +283,7 @@ docker-compose ps
 - Payment Service: http://localhost:8082
 - Grafana: http://localhost:3000 (admin/admin)
 - Prometheus: http://localhost:9090
-- Jaeger UI: http://localhost:16686
+- Grafana Tempo: Distributed tracing (via Grafana Explore)
 
 ### Option 2: Local Development
 
@@ -324,10 +335,15 @@ docker-compose ps
 - **Purpose**: Visualization and dashboards
 - **Features**: Pre-configured dashboards for microservices overview
 
-### Jaeger
-- **URL**: http://localhost:16686
-- **Purpose**: Distributed tracing
-- **Features**: Request tracing across services, performance analysis
+### Grafana Tempo
+- **Access**: Via Grafana Explore (http://localhost:3000/explore)
+- **Purpose**: Distributed tracing with end-to-end span visibility
+- **Features**: 
+  - End-to-end request tracing (Gateway → Services → Database)
+  - Database query tracing with JDBC spans
+  - Automatic trace context propagation
+  - Integrated with Grafana for unified observability
+  - All spans visible in single trace view
 
 ### Health Checks
 All services expose health endpoints:
@@ -341,14 +357,14 @@ curl http://localhost:8080/actuator/prometheus
 
 ## 🔐 Authentication Flow
 
-### OAuth2 Flow (Rintis Partner)
+### OAuth2 Flow (Partner Authentication)
 
 ```bash
 # 1. Generate Token
 curl -X POST "http://localhost:8080/api/oauth/token" \
-  -H "Authorization: Basic $(echo -n 'client_id:client_secret' | base64)" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=client_credentials"
+  -H "Authorization: Basic $(echo -n 'merchant-x-api-key-456:merchant-x-secret-key-123' | base64)" \
+  -H "Content-Type: application/json" \
+  -d '{"grant_type":"client_credentials"}'
 
 # 2. Use Token
 curl -X GET "http://localhost:8999/api/account/users" \
@@ -391,7 +407,7 @@ Used by all services (Authentication, Account, and Payment):
 
 ### Core Technologies
 - **Java 21**: Modern Java features and performance
-- **Spring Boot 3.4.1**: Application framework
+- **Spring Boot 3.5.10**: Application framework
 - **Spring Cloud 2025.0.0**: Microservices patterns
 - **Maven**: Build and dependency management
 
@@ -413,7 +429,8 @@ Used by all services (Authentication, Account, and Payment):
 - **Micrometer**: Metrics collection
 - **Prometheus**: Metrics storage
 - **Grafana**: Visualization
-- **Jaeger**: Distributed tracing
+- **Grafana Tempo**: Distributed tracing backend
+- **OpenTelemetry**: OTLP protocol for trace export
 
 ### Documentation
 - **SpringDoc OpenAPI**: API documentation (Swagger UI)
@@ -529,9 +546,7 @@ curl http://localhost:8999/api/auth/partners
 
 ## 📚 Additional Documentation
 
-- **Authentication Service**: See `authentication/README.md`
-- **Gateway Service**: See `gateway/README.md`
-- **Core Library**: See `core/README.md`
+- **API Collection**: See `docs/hoppscotch.json` for complete API collection
 - **Docker Setup**: See `docker/README.md`
 
 ## 🎯 Key Design Patterns
@@ -554,13 +569,11 @@ curl http://localhost:8999/api/auth/partners
 ## 🚧 Future Enhancements
 
 Potential improvements and extensions:
-- [ ] Spring Cloud Config Server for centralized configuration
 - [ ] Circuit Breaker pattern (Resilience4j)
 - [ ] Message Queue integration (RabbitMQ/Kafka)
 - [ ] Redis for caching and session management
 - [ ] Kubernetes deployment manifests
 - [ ] CI/CD pipeline configuration
-- [ ] Additional monitoring and alerting
 - [ ] Rate limiting and throttling
 - [ ] API versioning strategy
 

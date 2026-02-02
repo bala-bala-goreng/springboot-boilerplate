@@ -14,12 +14,12 @@
           "headers": [
             {
               "key": "Authorization",
-              "value": "Basic bXY5S0hhaFNZZzhaSzFESm1TN01ib01Tc0lwQktwVmQ6VmRoaXFKQjRaMUpFdERQQ3Q3Q0Z2SmtOdG9lcHdCMDk=",
+              "value": "Basic bWVyY2hhbnQteC1hcGkta2V5LTQ1NjptZXJjaGFudC14LXNlY3JldC1rZXktMTIz",
               "active": true
             },
             {
               "key": "Content-Type",
-              "value": "application/x-www-form-urlencoded",
+              "value": "application/json",
               "active": true
             }
           ],
@@ -30,8 +30,8 @@
             "authActive": true
           },
           "body": {
-            "contentType": "application/x-www-form-urlencoded",
-            "body": "grant_type=client_credentials"
+            "contentType": "application/json",
+            "body": "{\n  \"grant_type\": \"client_credentials\"\n}"
           },
           "requestVariables": [],
           "responses": {},
@@ -368,12 +368,12 @@
           "headers": [
             {
               "key": "Authorization",
-              "value": "Basic bXY5S0hhaFNZZzhaSzFESm1TN01ib01Tc0lwQktwVmQ6VmRoaXFKQjRaMUpFdERQQ3Q3Q0Z2SmtOdG9lcHdCMDk=",
+              "value": "Basic bWVyY2hhbnQteC1hcGkta2V5LTQ1NjptZXJjaGFudC14LXNlY3JldC1rZXktMTIz",
               "active": true
             },
             {
               "key": "Content-Type",
-              "value": "application/x-www-form-urlencoded",
+              "value": "application/json",
               "active": true
             }
           ],
@@ -384,8 +384,8 @@
             "authActive": true
           },
           "body": {
-            "contentType": "application/x-www-form-urlencoded",
-            "body": "grant_type=client_credentials"
+            "contentType": "application/json",
+            "body": "{\n  \"grant_type\": \"client_credentials\"\n}"
           },
           "requestVariables": [],
           "responses": {},
@@ -427,7 +427,7 @@
           "v": "17",
           "name": "Create Partner",
           "method": "POST",
-          "endpoint": "http://localhost:8080/partners",
+          "endpoint": "http://localhost:8080/api/partners",
           "params": [],
           "headers": [
             {
@@ -459,7 +459,7 @@
           "v": "17",
           "name": "Get All Partners",
           "method": "GET",
-          "endpoint": "http://localhost:8080/partners",
+          "endpoint": "http://localhost:8080/api/partners",
           "params": [],
           "headers": [
             {
@@ -486,7 +486,7 @@
           "v": "17",
           "name": "Get Partner by Code",
           "method": "GET",
-          "endpoint": "http://localhost:8080/partners/{{partnerCode}}",
+          "endpoint": "http://localhost:8080/api/partners/{{partnerCode}}",
           "params": [],
           "headers": [
             {
@@ -513,7 +513,7 @@
           "v": "17",
           "name": "Activate Partner",
           "method": "PUT",
-          "endpoint": "http://localhost:8080/partners/{{partnerCode}}/activate",
+          "endpoint": "http://localhost:8080/api/partners/{{partnerCode}}/activate",
           "params": [],
           "headers": [
             {
@@ -540,7 +540,7 @@
           "v": "17",
           "name": "Deactivate Partner",
           "method": "PUT",
-          "endpoint": "http://localhost:8080/partners/{{partnerCode}}/deactivate",
+          "endpoint": "http://localhost:8080/api/partners/{{partnerCode}}/deactivate",
           "params": [],
           "headers": [
             {
