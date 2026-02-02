@@ -160,18 +160,38 @@ services:
     networks:
       - app-network
 
-  # 6. Jaeger - Distributed Tracing UI and Collector (OTLP)
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    container_name: app-jaeger
-    hostname: jaeger
-    environment:
-      # Enable OTLP gRPC/HTTP collectors so services can send traces directly to Jaeger
-      - COLLECTOR_OTLP_ENABLED=true
+  # 6. OpenTelemetry Collector - Middleware for better error handling
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: app-otel-collector
+    hostname: otel-collector
+    volumes:
+      - ./otel-collector/config.yml:/etc/otelcol-contrib/config.yaml
     ports:
-      - "16686:16686"   # Jaeger UI
       - "4317:4317"     # OTLP gRPC
       - "4318:4318"     # OTLP HTTP
+    networks:
+      - app-network
+    depends_on:
+      - tempo
+    restart: unless-stopped
+
+  # 7. Tempo - Distributed Tracing Backend (for Grafana)
+  # Using version 2.3.1 which has better single-node support
+  tempo:
+    image: grafana/tempo:2.3.1
+    container_name: app-tempo
+    hostname: tempo
+    command: 
+      - "-config.file=/etc/tempo/tempo.yml"
+      - "-target=all"  # Run all components in single binary mode
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo/tempo.yml
+      - tempo_data:/var/tempo
+    ports:
+      - "3200:3200"     # Tempo API
+      # OTLP ports (4317, 4318) only exposed internally to Docker network
+      # Collector connects via Docker network, not via host ports
     networks:
       - app-network
     restart: unless-stopped
@@ -197,7 +217,7 @@ services:
       - app-network
     restart: unless-stopped
 
-  # 8. Grafana - Monitoring Dashboard
+  # 8. Grafana - Monitoring Dashboard (Metrics, Logs, Traces)
   grafana:
     image: grafana/grafana:latest
     container_name: app-grafana
@@ -214,6 +234,7 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
+      - tempo
     networks:
       - app-network
     restart: unless-stopped
@@ -222,6 +243,7 @@ volumes:
   postgresql_data:
   prometheus_data:
   grafana_data:
+  tempo_data:
 
 networks:
   app-network:

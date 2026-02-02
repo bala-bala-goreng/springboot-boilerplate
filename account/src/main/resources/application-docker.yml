@@ -1,9 +1,11 @@
-server:
-  port: 8081
-
 spring:
   application:
     name: service-account
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
   datasource:
     url: jdbc:postgresql://postgresql:5432/app_db
     username: app_user
@@ -12,6 +14,15 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
+    properties:
+      hibernate:
+        # Enable Hibernate statistics for tracing
+        generate_statistics: true
+        # Format SQL for better readability in traces
+        format_sql: true
+
+server:
+  port: 8081
 
 eureka:
   client:
@@ -19,12 +30,23 @@ eureka:
       defaultZone: http://eureka:8761/eureka
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
   tracing:
     sampling:
       probability: 1.0
     export:
       otlp:
         enabled: true
+    # Enable database/JDBC tracing
+    jdbc:
+      enabled: true
   otlp:
     tracing:
-      endpoint: http://jaeger:4318/v1/traces
+      endpoint: http://otel-collector:4318/v1/traces
+
+logging:
+  level:
+    root: INFO
